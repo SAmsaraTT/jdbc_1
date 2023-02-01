@@ -2,6 +2,8 @@ package com.atguigu.connection;
 
 import org.junit.Test;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -66,6 +68,53 @@ public class ConnectionTest {
         DriverManager.registerDriver(driver);
 
         //获取连接
+        Connection connection = DriverManager.getConnection(url, user, password);
+        System.out.println(connection);
+    }
+
+    //方式4
+    @Test
+    public void testConnection4() throws ClassNotFoundException, InstantiationException, IllegalAccessException, SQLException {
+        //1.获取Driver实现类对象：使用反射
+        Class.forName("com.mysql.jdbc.Driver");
+        //相较于方式3可以省略下列操作
+        //Driver driver = (Driver)aClass.newInstance();
+
+        //2.获取另外三个连接的基本信息
+        String url = "jdbc:mysql://localhost:3306/test?characterEncoding=utf8";
+        String user = "root";
+        String password = "soul990719";
+
+        //注册驱动
+        //相较于方式3可以省略下列操作
+        //DriverManager.registerDriver(driver);
+
+        //获取连接
+        Connection connection = DriverManager.getConnection(url, user, password);
+        System.out.println(connection);
+    }
+
+    //方式5：将数据库连接需要的四个基本信息声明在配置文件中，通过读取配置文件的方式，获取连接
+    @Test
+    public void getConnections5() throws IOException, ClassNotFoundException, SQLException {
+        //1.读取配置文件的基本信息
+
+        InputStream resourceAsStream = ConnectionTest.class.getClassLoader().getResourceAsStream("jdbc.properties");
+
+        Properties properties = new Properties();
+        properties.load(resourceAsStream);
+
+        String user = properties.getProperty("user");
+        String password = properties.getProperty("password");
+        String url = properties.getProperty("url");
+        String driverClass = properties.getProperty("driverClass");
+
+        //2.加载驱动
+
+        Class.forName(driverClass);
+
+        //3.获取连接
+
         Connection connection = DriverManager.getConnection(url, user, password);
         System.out.println(connection);
     }
