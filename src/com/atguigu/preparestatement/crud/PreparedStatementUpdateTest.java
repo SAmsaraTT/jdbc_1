@@ -1,7 +1,10 @@
 package com.atguigu.preparestatement.crud;
 
 import com.atguigu.connection.ConnectionTest;
+import com.atguigu.util.JDBCUtils;
+import jdk.nashorn.internal.scripts.JD;
 import org.junit.Test;
+import sun.security.mscapi.CPublicKey;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,6 +25,48 @@ import java.util.Properties;
  * @Version 1.0
  */
 public class PreparedStatementUpdateTest {
+    //测试通用的增删改操作方法
+    @Test
+    public void testGeneralUpdate() {
+//        String sql = "delete from customers where id = ?";
+//        update(sql, 3);
+
+        String sql = "update `order` set order_name = ? where order_id = ?";
+        update(sql, "DD", 2);
+    }
+
+
+    //通用的增删改操作
+    public void update(String sql, Object ...args) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            //1.获取数据库的连接
+            connection = JDBCUtils.getConnection();
+
+            //2.预编译sql语句，返回PreparedStatement的实例
+            preparedStatement = connection.prepareStatement(sql);
+
+            //3.填充占位符号
+            for (int i = 0; i < args.length; i++) {
+                preparedStatement.setObject(i + 1, args[i]);
+            }
+
+            //4.执行
+            preparedStatement.execute();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            //5.资源的关闭
+            JDBCUtils.closeResource(connection, preparedStatement);
+        }
+
+    }
+
     //向customers表中添加一条数据
     @Test
     public void testInsert() {
@@ -87,7 +132,37 @@ public class PreparedStatementUpdateTest {
                 throw new RuntimeException(e);
             }
         }
+    }
 
+    //修改customers表的一条记录
+    @Test
+    public void testUpdate() {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            //1.获取数据库的连接
+            connection = JDBCUtils.getConnection();
+
+            //2.预编译sql语句，返回PreparedStatement的实例
+            String sql = "update customers set name = ? where id = ?";
+            preparedStatement = connection.prepareStatement(sql);
+
+            //3.填充占位符
+            preparedStatement.setString(1, "莫扎特");
+            preparedStatement.setInt(2, 18);
+
+            //4.执行
+            preparedStatement.execute();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            //5.资源的关闭
+            JDBCUtils.closeResource(connection, preparedStatement);
+        }
 
     }
 }
