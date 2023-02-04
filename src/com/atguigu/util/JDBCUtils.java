@@ -58,4 +58,28 @@ public class JDBCUtils {
             throw new RuntimeException(e);
         }
     }
+
+    public static void closeResource(Connection connection, Statement preparedStatement, ResultSet resultSet) {
+        try {
+            if (preparedStatement != null) {
+                preparedStatement.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            if (connection != null) {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            if (resultSet != null) {
+                resultSet.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
