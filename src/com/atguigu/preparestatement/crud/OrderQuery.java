@@ -1,6 +1,6 @@
 package com.atguigu.preparestatement.crud;
 
-import com.atguigu.bean.Customer;
+import com.atguigu.bean.Order;
 import com.atguigu.util.JDBCUtils;
 import org.junit.Test;
 
@@ -9,58 +9,53 @@ import java.lang.reflect.Field;
 import java.sql.*;
 
 /**
- *
- * 针对于customer表的一个查询操作
+ * 针对order表的通用查询操作
  *
  * @Author hliu
- * @Date 2023/2/3 21:22
+ * @Date 2023/2/4 16:42
  * @Version 1.0
  */
-public class CustomersQuery {
+public class OrderQuery {
     @Test
-    public void testQueryCustomer() {
-        String sql = "select id, name, birth, email from customers where id = ?";
-        Customer customer = queryCustomers(sql, 13);
-        System.out.println(customer);
-
-        String sql1 = "select name, email from customers where name = ?";
-        Customer customer1 = queryCustomers(sql1, "周杰伦");
-        System.out.println(customer1);
+    public void testQueryOrder() {
+        String sql = "select order_id orderId, order_name orderName, order_date orderDate from `order` where order_id = ?";
+        Order order = queryOrder(sql, 1);
+        System.out.println(order);
     }
 
-
-    //通用的查询操作
-    public Customer queryCustomers(String sql, Object ...args) {
+    //通用查询操作
+    public Order queryOrder(String sql, Object... args) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         try {
             connection = JDBCUtils.getConnection();
-
             preparedStatement = connection.prepareStatement(sql);
+
             for (int i = 0; i < args.length; i++) {
                 preparedStatement.setObject(i + 1, args[i]);
             }
 
             resultSet = preparedStatement.executeQuery();
-            //获取结果集的元数据
             ResultSetMetaData metaData = resultSet.getMetaData();
-            int columnCount = metaData.getColumnCount();
+
             if (resultSet.next()) {
-                Customer customer = new Customer();
+                Order order = new Order();
+                int columnCount = metaData.getColumnCount();
                 for (int i = 0; i < columnCount; i++) {
                     Object object = resultSet.getObject(i + 1);
 
-                    //获取每个列的列名
-                    String columnName = metaData.getColumnLabel(i + 1);
+                    //获取列名，不推荐使用！
+                    String columnName = metaData.getColumnName(i + 1);
+                    //获取别名
+                    String columnLabel = metaData.getColumnLabel(i + 1);
 
-
-                    //给customer对象的某个属性，赋值为value, 通过反射
-                    Field declaredField = Customer.class.getDeclaredField(columnName);
+                    Field declaredField = Order.class.getDeclaredField(columnLabel);
                     declaredField.setAccessible(true);
-                    declaredField.set(customer, object);
+                    declaredField.set(order, object);
                 }
-                return customer;
+
+                return order;
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -79,6 +74,7 @@ public class CustomersQuery {
         return null;
     }
 
+
     @Test
     public void testQuery1() {
         Connection connection = null;
@@ -86,24 +82,18 @@ public class CustomersQuery {
         ResultSet resultSet = null;
         try {
             connection = JDBCUtils.getConnection();
-            String sql = "select id, name, email, birth from customers where id = ?";
+            String sql = "select order_id, order_name, order_date from `order` where order_id = ?";
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setObject(1, 1);
 
-            //执行，并返回结果集
             resultSet = preparedStatement.executeQuery();
-
-            //处理结果集
-            if (resultSet.next()) {//判断结果集的下一条是否有数据，并且指针下移
-                //获取结果集各个字段的值
+            if (resultSet.next()) {
                 int id = resultSet.getInt(1);
                 String name = resultSet.getString(2);
-                String email = resultSet.getString(3);
-                Date birth = resultSet.getDate(4);
+                Date date = resultSet.getDate(3);
 
-                //将数据封装为一个对象
-                Customer customer = new Customer(id, name, email, birth);
-                System.out.println(customer);
+                Order order = new Order(id, name, date);
+                System.out.println(order);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -112,10 +102,8 @@ public class CustomersQuery {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
-            //关闭资源
             JDBCUtils.closeResource(connection, preparedStatement, resultSet);
         }
-
 
     }
 }

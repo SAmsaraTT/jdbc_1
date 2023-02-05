@@ -37,7 +37,7 @@ public class PreparedStatementUpdateTest {
 
 
     //通用的增删改操作
-    public void update(String sql, Object ...args) {
+    public int update(String sql, Object ...args) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         try {
@@ -52,8 +52,8 @@ public class PreparedStatementUpdateTest {
                 preparedStatement.setObject(i + 1, args[i]);
             }
 
-            //4.执行
-            preparedStatement.execute();
+            //4.执行 有返回结果true, 无返回结果false
+            return preparedStatement.executeUpdate();
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (ClassNotFoundException e) {
@@ -64,7 +64,6 @@ public class PreparedStatementUpdateTest {
             //5.资源的关闭
             JDBCUtils.closeResource(connection, preparedStatement);
         }
-
     }
 
     //向customers表中添加一条数据
