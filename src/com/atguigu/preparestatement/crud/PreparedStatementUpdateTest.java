@@ -52,7 +52,7 @@ public class PreparedStatementUpdateTest {
                 preparedStatement.setObject(i + 1, args[i]);
             }
 
-            //4.执行 有返回结果true, 无返回结果false
+            //4.执行 execute():有返回结果true, 无返回结果false
             return preparedStatement.executeUpdate();
         } catch (IOException e) {
             throw new RuntimeException(e);

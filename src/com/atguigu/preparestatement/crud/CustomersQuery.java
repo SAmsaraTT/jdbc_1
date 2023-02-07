@@ -29,7 +29,13 @@ public class CustomersQuery {
     }
 
 
-    //通用的查询操作
+    /**
+    * @Description: 通用的查询操作
+    * @Param: [sql, args]
+    * @return: com.atguigu.bean.Customer
+    * @Author: hliu
+    * @Date: 2023/2/5
+    */
     public Customer queryCustomers(String sql, Object ...args) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
