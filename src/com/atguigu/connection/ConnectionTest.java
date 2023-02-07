@@ -19,7 +19,7 @@ public class ConnectionTest {
     //方式1
     @Test
     public void testConnection1() throws SQLException {
-        Driver driver = new com.mysql.jdbc.Driver();
+        Driver driver = new com.mysql.cj.jdbc.Driver();
 
         String url = "jdbc:mysql://localhost:3306/test?characterEncoding=utf8";
         //将用户名和密码封装在Properties中
@@ -36,7 +36,7 @@ public class ConnectionTest {
     @Test
     public void testConnection2() throws ClassNotFoundException, InstantiationException, IllegalAccessException, SQLException {
         //1.获取Driver实现类对象：使用反射
-        Class<?> aClass = Class.forName("com.mysql.jdbc.Driver");
+        Class<?> aClass = Class.forName("com.mysql.cj.jdbc.Driver");
         Driver driver = (Driver)aClass.newInstance();
 
         //2.提供要连接的数据库
@@ -56,7 +56,7 @@ public class ConnectionTest {
     @Test
     public void testConnection3() throws ClassNotFoundException, InstantiationException, IllegalAccessException, SQLException {
         //1.获取Driver实现类对象：使用反射
-        Class<?> aClass = Class.forName("com.mysql.jdbc.Driver");
+        Class<?> aClass = Class.forName("com.mysql.cj.jdbc.Driver");
         Driver driver = (Driver)aClass.newInstance();
 
         //2.获取另外三个连接的基本信息
@@ -76,7 +76,7 @@ public class ConnectionTest {
     @Test
     public void testConnection4() throws ClassNotFoundException, InstantiationException, IllegalAccessException, SQLException {
         //1.获取Driver实现类对象：使用反射
-        Class.forName("com.mysql.jdbc.Driver");
+        Class.forName("com.mysql.cj.jdbc.Driver");
         //相较于方式3可以省略下列操作
         //Driver driver = (Driver)aClass.newInstance();
 
